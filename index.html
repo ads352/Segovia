@@ -102,7 +102,10 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
    next to Kahoot, stack the arch on top of a short panel. Wide windows, such as full screen, use two columns. */
 .toast{position:fixed;left:50%;bottom:1.2rem;transform:translate(-50%,20px);background:var(--ink);color:#1d1d1d;font-weight:700;padding:.6em 1em;border-radius:.6em;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:10;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-footer .hint{opacity:.5} body.show-keys footer .hint{display:none}
+footer .hint{opacity:.5}
+.klink{all:unset;cursor:pointer;display:none;margin-left:1em;padding:.1em .5em;border:1px solid var(--line);border-radius:.3em;color:var(--ink)}
+.klink:hover,.klink:focus-visible{border-color:var(--amber);color:var(--amber)}
+body[data-scene=open] .klink{display:inline-block} body.show-keys footer .hint{display:none}
 body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 @media (max-aspect-ratio:5/4),(max-width:820px){
   body{font-size:clamp(11px,min(2.1vw,2.3vh),24px)}
@@ -196,7 +199,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   </main>
   <footer>
     <div class="keys"><span class="only-k">Click the Kahoot winner, or click here first and press </span><kbd>1</kbd>–<kbd>4</kbd><span class="only-n"> pick the room's vote</span> · <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen · <kbd>K</kbd> Kahoot mode · <kbd>P</kbd> presentation mode · <kbd>?</kbd> hide keys</div>
-    <div class="hint"><kbd>?</kbd> keys</div>
+    <div class="hint"><kbd>?</kbd> keys <button class="klink" id="klink" type="button" title="Open the Kahoot in a new window">Open Kahoot ↗</button></div>
     <div class="credit">Group E · Lina, Omar, Paul, Ariel, Rodrigo, Sultan · Self-Leadership Week, Segovia</div>
   </footer>
 </div>
@@ -284,6 +287,8 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   const $ = id => document.getElementById(id);
   const kahoot = () => document.body.classList.contains("kahoot");
+  // The group's Kahoot, opened in its own window so it can sit next to the game
+  const KAHOOT_URL = "https://create.kahoot.it/share/leading-psychological-safety-conversations/559ec351-468b-4b7e-80ba-a2afcdedf796";
 
   // Presentation mode (P): full screen for the opening and the closing, back to the side-by-side window
   // (game + Kahoot) for the setup and the rounds. Also turns on the Kahoot buttons.
@@ -391,6 +396,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   // ---------- scenes ----------
   function render(){
     stageScreen();
+    document.body.dataset.scene = st.scene;
     const P = $("panel");
     $("pips").innerHTML = ROUNDS.map((_,i)=>`<span class="pip ${i<st.history.length?'on':''}"></span>`).join("");
     renderTeam();
@@ -584,6 +590,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     }
   });
 
+  $("klink").onclick = e => { e.currentTarget.blur(); window.open(KAHOOT_URL, "kahoot", "noopener,width=960,height=1000"); };
   let saved=null; try{ saved=localStorage.getItem("aqueduct-kahoot"); }catch(_){}
   setKahoot(location.hash==="#kahoot" || saved==="1");
   let savedP=null; try{ savedP=localStorage.getItem("aqueduct-present"); }catch(_){}

@@ -15,6 +15,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 
 ## How it runs on stage
 - Set-up before the talk: browser window with the game on one half of the screen, Kahoot on the other. Press `P` once.
+  The opening screen has a small "Open Kahoot ↗" link (footer, bottom left; `KAHOOT_URL`) that opens the group's Kahoot in its own window.
 - Presentation mode (`P`, remembered): full screen for the opening and the closing, back to the side-by-side window
   for the setup screen (people join Kahoot) and the three rounds. Follows back/forward too. Turns on Kahoot buttons.
   Full screen needs a key press or click, so it applies on the first key after loading.
