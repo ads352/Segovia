@@ -14,7 +14,11 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - A published copy exists as a claude.ai artifact (version 1). This folder is now the source of truth.
 
 ## How it runs on stage
-- Presenter A reads the feedback aloud. The room votes with 1–4 fingers.
+- Set-up before the talk: browser window with the game on one half of the screen, Kahoot on the other. Press `P` once.
+- Presentation mode (`P`, remembered): full screen for the opening and the closing, back to the side-by-side window
+  for the setup screen (people join Kahoot) and the three rounds. Follows back/forward too. Turns on Kahoot buttons.
+  Full screen needs a key press or click, so it applies on the first key after loading.
+- Presenter A reads the feedback aloud. The room votes in Kahoot (or with 1–4 fingers if Kahoot is off).
 - Presenter B drives the laptop:
   - `1`–`4` pick the majority vote (only during a round)
   - `Space` / `Enter` / `→` / `PageDown` advance

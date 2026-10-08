@@ -100,6 +100,8 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}}
 /* Layout follows the window shape, not the mode. Narrow (roughly square or tall) windows, such as half a screen
    next to Kahoot, stack the arch on top of a short panel. Wide windows, such as full screen, use two columns. */
+.toast{position:fixed;left:50%;bottom:1.2rem;transform:translate(-50%,20px);background:var(--ink);color:#1d1d1d;font-weight:700;padding:.6em 1em;border-radius:.6em;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:10;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 footer .hint{opacity:.5} body.show-keys footer .hint{display:none}
 body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 @media (max-aspect-ratio:5/4),(max-width:820px){
@@ -163,6 +165,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 </head>
 <body>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="app">
   <header>
     <div class="brand">Build the <span>Aqueduct</span> <small class="grp">Group E</small></div>
@@ -192,7 +195,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     <section class="panel" id="panel" aria-live="polite"></section>
   </main>
   <footer>
-    <div class="keys"><span class="only-k">Click the Kahoot winner, or click here first and press </span><kbd>1</kbd>–<kbd>4</kbd><span class="only-n"> pick the room's vote</span> · <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen · <kbd>K</kbd> Kahoot mode · <kbd>?</kbd> hide keys</div>
+    <div class="keys"><span class="only-k">Click the Kahoot winner, or click here first and press </span><kbd>1</kbd>–<kbd>4</kbd><span class="only-n"> pick the room's vote</span> · <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen · <kbd>K</kbd> Kahoot mode · <kbd>P</kbd> presentation mode · <kbd>?</kbd> hide keys</div>
     <div class="hint"><kbd>?</kbd> keys</div>
     <div class="credit">Group E · Lina, Omar, Paul, Ariel, Rodrigo, Sultan · Self-Leadership Week, Segovia</div>
   </footer>
@@ -281,6 +284,34 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   const $ = id => document.getElementById(id);
   const kahoot = () => document.body.classList.contains("kahoot");
+
+  // Presentation mode (P): full screen for the opening and the closing, back to the side-by-side window
+  // (game + Kahoot) for the setup and the rounds. Also turns on the Kahoot buttons.
+  // Browsers only allow full screen from a key press or click, so this runs inside render(),
+  // which every key and button calls.
+  let presenting = false;
+  function setPresenting(on){
+    presenting = on;
+    try{ localStorage.setItem("aqueduct-present", on?"1":"0"); }catch(_){}
+    if(on) setKahoot(true);
+    toast(on ? "Presentation mode on: full screen for opening and closing, side by side for the rounds"
+             : "Presentation mode off");
+  }
+  function stageScreen(){
+    if(!presenting || !st) return;
+    const wantFull = st.scene==="open" || st.scene==="close";
+    const isFull = !!document.fullscreenElement;
+    try{
+      if(wantFull && !isFull) document.documentElement.requestFullscreen().catch(()=>{});
+      else if(!wantFull && isFull) document.exitFullscreen().catch(()=>{});
+    }catch(_){}
+  }
+  let toastTimer;
+  function toast(msg){
+    const t = $("toast"); if(!t) return;
+    t.textContent = msg; t.classList.add("on");
+    clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove("on"), 2600);
+  }
   function setKahoot(on){
     document.body.classList.toggle("kahoot", on);
     try{ localStorage.setItem("aqueduct-kahoot", on?"1":"0"); }catch(_){}
@@ -359,6 +390,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   // ---------- scenes ----------
   function render(){
+    stageScreen();
     const P = $("panel");
     $("pips").innerHTML = ROUNDS.map((_,i)=>`<span class="pip ${i<st.history.length?'on':''}"></span>`).join("");
     renderTeam();
@@ -544,6 +576,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     else if(e.key==="ArrowLeft"||e.key==="Backspace"||e.key==="PageUp"){ e.preventDefault(); back(); }
     else if(e.key==="r"||e.key==="R"){ reset(); }
     else if(e.key==="?"||e.key==="h"||e.key==="H"){ document.body.classList.toggle("show-keys"); }
+    else if(e.key==="p"||e.key==="P"){ setPresenting(!presenting); render(); }
     else if(e.key==="k"||e.key==="K"){ setKahoot(!kahoot()); render(); }
     else if(e.key==="t"||e.key==="T"){ const w=$("clockWrap"); w.hidden=!w.hidden; }
     else if(e.key==="f"||e.key==="F"){
@@ -553,6 +586,9 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   let saved=null; try{ saved=localStorage.getItem("aqueduct-kahoot"); }catch(_){}
   setKahoot(location.hash==="#kahoot" || saved==="1");
+  let savedP=null; try{ savedP=localStorage.getItem("aqueduct-present"); }catch(_){}
+  presenting = savedP==="1";
+  if(presenting) setKahoot(true);
   reset();
 })();
 </script>
