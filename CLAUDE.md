@@ -41,14 +41,17 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Each round: one team member's feedback, four leader reactions:
   1. Defend → −1 stone, character shrinks (failed to listen)
   2. Listen only → 0, character dims
-  3. Act, don't tell → +1
+  3. Act, don't tell → +2 on the spot (looks as good as 4), then two weeks later one stone cracks (−1, net +1)
   4. Act and tell → +2, character brightens
+- Not obvious on purpose: answers are shown as plain actions with no labels, in a different order each
+  round (`order` in `ROUNDS`). Labels are revealed on the result screen. Keys 1–4 pick the shown position.
 - Each round starts with what the leader asked (`ask` in `ROUNDS`), so Ask and Listen are shown, and the vote is about Act and Tell.
 - Round 3 bonus: closing the loop in round 3 after closing it earlier gives +1 extra and lights up the whole team.
 - Arch only completes if the room closes the loop at least twice. This is intentional: "act, don't tell" every round must fail.
 
 ## Delayed consequences (the core teaching mechanic, in `next()` and the `later` scene)
 - No separate scene: the consequence is one "Two weeks later" line (`st.later`) at the top of the next round, plus the team animation.
+- If the round was "act, don't tell", that line is the crack line (`crack` in `ROUNDS`) and a stone falls. After round 3 it shows on the closing screen.
 - If round 1 is ignored (delta ≤ 0), Marta goes silent and grey.
 - If round 1 closed the loop, Marta disagrees openly in the meeting.
 - Before round 3: Priya joins; if any loop was closed, Jonas and Lea also join. If round 2 was ignored, Rui goes silent.
@@ -92,8 +95,9 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 
 ## Testing
 - Open `index.html`, play all three rounds with different vote combos:
-  - all 4s → arch completes, team grows
-  - all 3s → arch stops at 6, cannot close
-  - 1, then 2, then 4 → Marta silent, Rui silent, no bonus
+  - Keys are display positions. Act and tell is 2, 3, 1. Act, don't tell is 1, 4, 2.
+  - 2, 3, 1 (always act and tell) → arch completes, team grows
+  - 1, 4, 2 (always act, don't tell) → +2 each round, a stone cracks each time, ends at 6, Tell 0/3
+  - 3, 1, 1 (defend, listen only, act and tell) → Marta silent, Rui silent, no bonus, 4 stones
 - Check at 1920×1080 fullscreen and at a narrow width.
 - `node --check` on the extracted script catches syntax errors.

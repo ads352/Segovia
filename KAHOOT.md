@@ -19,32 +19,34 @@ The game's `K` key (or opening `index.html#kahoot`) switches it to Kahoot mode.
 
 ## Questions (all under Kahoot's limits: 120 characters per question, 75 per answer)
 
+The answers are deliberately unlabelled and the best one moves around. Keep this exact order.
+
 ### Round 1 — Marta, senior engineer
 **Q:** You asked Marta. She says: "I don't feel I can disagree with you in meetings. You've decided before we talk."
 
 | Shape | Answer |
 |---|---|
-| 🔺 Red | Defend: "I always ask for input. People should speak up more." |
-| 🔷 Blue | Listen only: "Thanks, good point." Nothing changes. |
-| 🟡 Yellow | Act, don't tell: ask for views first. Don't mention it. |
-| 🟩 Green | Act and tell: change meetings, tell the team Marta raised it. |
+| 🔺 Red | From tomorrow, ask for everyone's view before you give yours. |
+| 🔷 Blue | Change how you run meetings, and at the next one say why. |
+| 🟡 Yellow | Explain you always ask for input. Encourage her to speak up more. |
+| 🟩 Green | Thank her warmly. Tell her this is really useful to hear. |
 
 ### Round 2 — Rui, design engineer
 **Q:** You asked the team. Rui says: "Our daily stand-up runs 40 minutes. It eats my best focus time." What do you do?
 
 | Shape | Answer |
 |---|---|
-| 🔺 Red | Defend: "Alignment prevents rework. We need it." |
-| 🔷 Blue | Listen only: "Fair. Let's look at it at some point." |
-| 🟡 Yellow | Act, don't tell: cut it to 15 minutes. No explanation. |
-| 🟩 Green | Act and tell: cut to 15 min, "Rui flagged this. Is it working?" |
+| 🔺 Red | Agree it's long. Promise to look at it after the release. |
+| 🔷 Blue | Show him the data: since daily stand-ups started, rework is down. |
+| 🟡 Yellow | Cut it to 15 min, credit Rui, and check in two weeks if it works. |
+| 🟩 Green | Cut it to 15 minutes, starting Monday. |
 
 ### Round 3 — Priya, graduate engineer
 **Q:** You asked Priya. She says: "I made a mistake on the drawings last week. I was afraid to tell you." What do you do?
 
 | Shape | Answer |
 |---|---|
-| 🔺 Red | Defend: "That should have been caught. Who checked it?" |
-| 🔷 Blue | Listen only: "OK, thanks for telling me." |
-| 🟡 Yellow | Act, don't tell: fix the review step. Keep it quiet. |
-| 🟩 Green | Act and tell: fix the review step, thank her in front of the team. |
+| 🔺 Red | Thank her at the team meeting for raising it, share the new review step. |
+| 🔷 Blue | Add a second review step to the process. |
+| 🟡 Yellow | Reassure her: it's fine, everyone makes mistakes. |
+| 🟩 Green | Find out who reviewed the drawings, so it doesn't happen again. |

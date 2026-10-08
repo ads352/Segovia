@@ -42,7 +42,7 @@ svg.arch{width:100%;height:auto;display:block;max-height:58vh}
 .pillar{fill:var(--granite)} .pillar-dk{fill:var(--granite-dk)}
 .ground{stroke:var(--line);stroke-width:2}
 .slot-label{fill:var(--muted);font:600 13px var(--f-body)}
-.team{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem;margin-top:.6rem;min-height:6.5em}
+.team{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem;margin-top:1.1rem;min-height:6.5em}
 .mate{display:flex;flex-direction:column;align-items:center;gap:.3rem;transition:transform .6s,opacity .6s,filter .6s}
 .mate .face{width:3.4em;height:3em;border-radius:46% 54% 42% 58%/55% 50% 50% 45%;background:var(--granite);position:relative;box-shadow:inset -6px -6px 0 rgba(0,0,0,.12)}
 .mate .face::before,.mate .face::after{content:"";position:absolute;top:38%;width:.42em;height:.42em;border-radius:50%;background:#2a2a2a}
@@ -77,6 +77,9 @@ p{margin:0;line-height:1.45;max-width:38em}
 .choice .k{grid-row:span 2;font-family:var(--f-display);font-weight:800;font-size:1.5em;color:var(--amber);line-height:1}
 .choice .t{font-weight:700}
 .choice .d{font-size:.85em;color:var(--muted);line-height:1.35}
+.choice.blind{align-items:center}
+.choice.blind .t{font-weight:600}
+.kc .kd{font-size:.85em;font-weight:600}
 .choice.picked{border-color:var(--amber);background:rgba(233,164,64,.14)}
 .choice.faded{opacity:.3}
 .verdict{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
@@ -99,6 +102,7 @@ body.kahoot main{grid-template-columns:1fr;gap:.8rem;align-items:start}
 body.kahoot svg.arch{max-height:33vh;margin-inline:auto}
 body.kahoot .team{min-height:4.5em;margin-top:.9rem;gap:1rem}
 body.kahoot .bubble{font-size:1em}
+body.kahoot .later{font-size:.85em}
 body.kahoot footer > div:last-child{display:none}
 body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 .kchoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
@@ -166,46 +170,55 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   const FILL_ORDER = [0,8,1,7,2,6,3,5,4]; // keystone last
 
   // Each round: you ask (Ask), they answer (Listen), the room picks what you do next (Act, Tell).
+  // Options stay in framework order (scoring and the closing score rely on it); `order` is how they are
+  // shown, so the best answer moves around. Labels (t) are only revealed after the vote.
+  // "Act, don't tell" pays +2 on the spot, like "Act and tell"; two weeks later one stone cracks (`crack`).
   const ROUNDS = [
     {
-      who:"Marta", role:"Senior engineer", moment:"Challenging the status quo", ask:"In your 1:1 you ask Marta: “What should I do differently?”",
+      who:"Marta", role:"Senior engineer", moment:"Challenging the status quo", order:[2,3,0,1],
+      ask:"In your 1:1 you ask Marta: “What should I do differently?”",
       says:"I don't feel I can disagree with you in meetings. You've decided before we talk.",
+      crack:"Marta isn't sure the change was because of her. She keeps the next thing to herself. A stone cracks.",
       options:[
-        {t:"Defend", d:"“I always ask for input. People should speak up more.”", delta:-1, mood:"small",
+        {t:"Defend", d:"Explain you always ask for input. Encourage her to speak up more.", delta:-1, mood:"small",
           out:"Marta hears: the problem is you. A stone falls."},
-        {t:"Listen only", d:"“Thanks, really good point.” Nothing changes.", delta:0, mood:"dim",
+        {t:"Listen only", d:"Thank her warmly. Tell her this is really useful to hear.", delta:0, mood:"dim",
           out:"It felt polite. Nothing moved. Marta notices."},
-        {t:"Act, don't tell", d:"Ask for views before giving yours. Don't mention it.", delta:1, mood:"normal",
-          out:"Meetings improve. Marta isn't sure it was because of her."},
-        {t:"Act and tell", d:"Change how you run meetings. Tell the team Marta raised it.", delta:2, mood:"bright", loop:true,
+        {t:"Act, don't tell", d:"From tomorrow, ask for everyone's view before you give yours.", delta:2, mood:"bright", crack:true,
+          out:"Meetings get better straight away. Two stones."},
+        {t:"Act and tell", d:"Change how you run meetings, and at the next one say why.", delta:2, mood:"bright", loop:true,
           out:"Marta sees her voice changed something. Two stones."}
       ]
     },
     {
-      who:"Rui", role:"Design engineer", moment:"Sharing an idea", ask:"In the retro you ask the team: “What slows us down?”",
+      who:"Rui", role:"Design engineer", moment:"Sharing an idea", order:[1,0,3,2],
+      ask:"In the retro you ask the team: “What slows us down?”",
       says:"Our daily stand-up runs 40 minutes. It eats my best focus time.",
+      crack:"The team guesses why stand-up changed. Nobody links it to Rui speaking up. A stone cracks.",
       options:[
-        {t:"Defend", d:"“Alignment prevents rework. The numbers say we need it.”", delta:-1, mood:"small",
+        {t:"Defend", d:"Show him the data: since daily stand-ups started, rework is down.", delta:-1, mood:"small",
           out:"Rui stops bringing problems. You won the argument and lost the signal."},
-        {t:"Listen only", d:"“Fair. Let's look at it at some point.”", delta:0, mood:"dim",
-          out:"“At some point” never comes. Rui stops asking."},
-        {t:"Act, don't tell", d:"Cut it to 15 minutes. No explanation.", delta:1, mood:"normal",
-          out:"Better meetings. The team guesses why."},
-        {t:"Act and tell", d:"Cut to 15 minutes. “Rui flagged this. Tell me in two weeks if it works.”", delta:2, mood:"bright", loop:true,
+        {t:"Listen only", d:"Agree it's long. Promise to look at it after the release.", delta:0, mood:"dim",
+          out:"“After the release” never comes. Rui stops asking."},
+        {t:"Act, don't tell", d:"Cut it to 15 minutes, starting Monday.", delta:2, mood:"bright", crack:true,
+          out:"Everyone gets 25 minutes back every day. Two stones."},
+        {t:"Act and tell", d:"Cut it to 15 minutes, credit Rui, and check in two weeks if it works.", delta:2, mood:"bright", loop:true,
           out:"Rui learns feedback is safe and useful. So does everyone watching."}
       ]
     },
     {
-      who:"Priya", role:"Graduate engineer", moment:"Admitting a mistake", ask:"You ask Priya: “Is there anything you've been holding back?”",
+      who:"Priya", role:"Graduate engineer", moment:"Admitting a mistake", order:[3,2,1,0],
+      ask:"You ask Priya: “Is there anything you've been holding back?”",
       says:"I made a mistake on the drawings last week. I was afraid to tell you.",
+      crack:"Priya never hears what happened. Next time, she waits. A stone cracks.",
       options:[
-        {t:"Defend", d:"“That should have been caught. Who checked it?”", delta:-1, mood:"small",
+        {t:"Defend", d:"Find out who reviewed the drawings, so it doesn't happen again.", delta:-1, mood:"small",
           out:"Next mistake, nobody tells you. You will find out from the customer."},
-        {t:"Listen only", d:"“OK, thanks for telling me.”", delta:0, mood:"dim",
+        {t:"Listen only", d:"Reassure her: it's fine, everyone makes mistakes.", delta:0, mood:"dim",
           out:"Priya is relieved. The process that let it slip stays the same."},
-        {t:"Act, don't tell", d:"Fix the review step. Keep it between you.", delta:1, mood:"normal",
-          out:"The gap closes. The fear stays."},
-        {t:"Act and tell", d:"Thank her in front of the team, fix the review step, report back.", delta:2, mood:"bright", loop:true,
+        {t:"Act, don't tell", d:"Add a second review step to the process.", delta:2, mood:"bright", crack:true,
+          out:"The gap is closed. That mistake can't slip through again. Two stones."},
+        {t:"Act and tell", d:"Thank her at the team meeting for raising it, share the new review step.", delta:2, mood:"bright", loop:true,
           out:"Admitting a mistake just became the normal thing to do here."}
       ]
     }
@@ -343,10 +356,10 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
         <p class="ask">${R.ask}</p>
         <div class="bubble"><span class="who">${R.who} · ${R.role}</span>${R.says}</div>
         ${kahoot()
-          ? `<div class="kchoices">${R.options.map((o,i)=>`
-              <button class="kc k${i}" data-i="${i}">${kshape(i)}<span>${o.t}</span><span class="n">${i+1}</span></button>`).join("")}</div>`
-          : `<div class="choices">${R.options.map((o,i)=>`
-              <button class="choice" data-i="${i}"><span class="k">${i+1}</span><span class="t">${o.t}</span><span class="d">${o.d}</span></button>`).join("")}</div>`}
+          ? `<div class="kchoices">${R.order.map((oi,p)=>`
+              <button class="kc k${p}" data-i="${p}">${kshape(p)}<span class="kd">${R.options[oi].d}</span><span class="n">${p+1}</span></button>`).join("")}</div>`
+          : `<div class="choices">${R.order.map((oi,p)=>`
+              <button class="choice blind" data-i="${p}"><span class="k">${p+1}</span><span class="t">${R.options[oi].d}</span></button>`).join("")}</div>`}
         </div>`;
       P.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
     }
@@ -356,11 +369,11 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
       const cls = o.delta>1?"good":o.delta<0?"bad":"mid";
       const lbl = o.delta>0?`+${o.delta} stone${o.delta>1?"s":""}`:o.delta<0?"−1 stone":"No stone";
       P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
-        <div class="eyebrow">Round ${st.round+1} · The room chose ${st.picked+1}</div>
+        <div class="eyebrow">Round ${st.round+1} · The room chose ${st.pos+1}: ${o.t}</div>
         ${kahoot()
-          ? `<div class="kc solo k${st.picked}">${kshape(st.picked)}<span>${o.t}</span></div>`
-          : `<div class="choices">${R.options.map((x,i)=>`
-              <div class="choice ${i===st.picked?'picked':'faded'}"><span class="k">${i+1}</span><span class="t">${x.t}</span><span class="d">${x.d}</span></div>`).join("")}</div>`}
+          ? `<div class="kc solo k${st.pos}">${kshape(st.pos)}<span>${o.t}</span></div>`
+          : `<div class="choices">${R.order.map((oi,p)=>`
+              <div class="choice ${p===st.pos?'picked':'faded'}"><span class="k">${p+1}</span><span class="t">${R.options[oi].t}</span><span class="d">${R.options[oi].d}</span></div>`).join("")}</div>`}
         <div class="verdict"><span class="chip ${cls}">${lbl}</span></div>
         <h2>${o.out}</h2>
         <button class="btn" id="go">${st.round<2?"Two weeks later →":"See the arch →"}</button></div>`;
@@ -372,11 +385,12 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
       // Ask happened every round; Listen = didn't defend; Act = changed something; Tell = closed the loop
       const score = [3, st.history.filter(i=>i>=1).length, st.history.filter(i=>i>=2).length, st.history.filter(i=>i===3).length];
       P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
+        ${st.later?`<p class="later">${st.later}</p>`:""}
         <div class="eyebrow">${st.stones} of 9 stones</div>
         <h1>${done?"The arch stands.":"The arch can't close."}</h1>
         ${frame([], score)}
         <p class="lead">People don't speak if you don't ask. They stop speaking if you don't act and tell.</p>
-        <p class="src">“Trust is built in very small moments.” <span>· Brené Brown, in Psychological Safety</span></p>
+        <p class="src only-n">“Trust is built in very small moments.” <span>· Brené Brown, in Psychological Safety</span></p>
         <ul class="rules">
           <li><b>This week</b><span>Name one person. Ask what you should change. Act on one thing. Then tell them what changed.</span></li>
         </ul>
@@ -385,13 +399,13 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     }
   }
 
-  function choose(i){
+  function choose(pos){
     if(st.scene!=="round") return;
-    const R = ROUNDS[st.round], o = R.options[i];
+    const R = ROUNDS[st.round], i = R.order[pos], o = R.options[i];
     let delta = o.delta;
     // Round 3 bonus: if the leader closed the loop before, others join and stones arrive faster
     if(st.round===2 && o.loop && st.loops>0) delta += 1;
-    st.picked = i; st.history.push(i);
+    st.pos = pos; st.picked = i; st.history.push(i);
     if(o.loop) st.loops++;
     const prev = st.stones;
     st.stones = Math.max(0, Math.min(TARGET, st.stones + delta));
@@ -414,6 +428,11 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     }
     else if(st.scene==="setup"){ st.scene="round"; st.round=0; st.later=null; }
     else if(st.scene==="result"){
+      // "Act, don't tell" looked as good as "Act and tell". Two weeks later, one stone cracks.
+      const R = ROUNDS[st.round], cracked = !!R.options[st.picked].crack, before = st.stones;
+      if(cracked) st.stones = Math.max(0, st.stones-1);
+      const crackLine = cracked ? `<b>Two weeks later.</b> ${R.crack}` : null;
+      const after = () => { if(cracked){ setMood(R.who,"normal"); st.later = crackLine; } };
       if(st.round<2){
         st.round++;
         // delayed consequences: the team changes and one line opens the next round
@@ -433,8 +452,12 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
             ? "<b>Two weeks later.</b> Jonas and Lea join. They see feedback lead somewhere, and speak up from day one."
             : "<b>Two weeks later.</b> Fewer people bring you problems. It looks calm. It isn't.";
         }
+        after();
         st.scene="round";
-      } else st.scene="close";
+      } else { st.later = null; after(); st.scene="close"; }
+      render();
+      if(cracked) paintArch(before);
+      return;
     }
     else if(st.scene==="close"){ reset(); return; }
     render();
