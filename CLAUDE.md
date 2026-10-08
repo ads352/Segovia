@@ -23,12 +23,17 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
   - `R` restart, `T` hide/show timer, `F` fullscreen, `?` show/hide key hints
 - Timer starts on the first advance, turns red at 5:30.
 
+## Layout follows the window shape
+- Wide windows (full screen) use two columns. Narrow ones (aspect ratio ≤ 5:4, e.g. half the screen next to Kahoot,
+  or width ≤ 820px) stack the arch above a short panel, hide the wide-only lines (`.wide-only`) and,
+  on result screens, show only the chosen card. Switches by itself when full screen is entered or left.
+
 ## Kahoot mode (`K`, or open `index.html#kahoot`; remembered in localStorage)
-- For running a Kahoot poll alongside: Kahoot in one half of the screen, the game in the other.
+- Content only, not layout: round choices become Kahoot-coloured buttons
+  (1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square) and copy says "Vote in Kahoot".
+  Answer order in Kahoot must match.
 - Kahoot cannot be embedded or read automatically. Presenter B clicks the Kahoot winner in the game.
-- Layout stacks: arch on top, short panel below. Round choices become Kahoot-coloured buttons
-  (1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square). Answer order in Kahoot must match.
-- Normal mode is unchanged, so Kahoot can be dropped on the day if Wi-Fi fails.
+- Kahoot can be dropped on the day if Wi-Fi fails: press K to go back to finger votes.
 - Kahoot questions and set-up: `KAHOOT.md`. `Kahoot-polls.pdf` (from `kahoot-polls.html`) is the upload for Kahoot AI; keep all three in sync with `ROUNDS` order.
 
 ## Scene flow
