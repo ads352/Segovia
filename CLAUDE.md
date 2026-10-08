@@ -27,7 +27,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Layout stacks: arch on top, short panel below. Round choices become Kahoot-coloured buttons
   (1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square). Answer order in Kahoot must match.
 - Normal mode is unchanged, so Kahoot can be dropped on the day if Wi-Fi fails.
-- Kahoot questions and set-up: `KAHOOT.md`.
+- Kahoot questions and set-up: `KAHOOT.md`. `Kahoot-polls.pdf` (from `kahoot-polls.html`) is the upload for Kahoot AI; keep all three in sync with `ROUNDS` order.
 
 ## Scene flow
 `open (3 steps) → setup → round 1 → result → round 2 → result → round 3 → result → close`
