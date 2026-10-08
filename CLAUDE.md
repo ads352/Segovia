@@ -18,7 +18,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Presenter B drives the laptop:
   - `1`–`4` pick the majority vote (only during a round)
   - `Space` / `Enter` / `→` advance
-  - `R` restart, `T` hide/show timer, `F` fullscreen
+  - `R` restart, `T` hide/show timer, `F` fullscreen, `?` show/hide key hints
 - Timer starts on the first advance, turns red at 5:30.
 
 ## Kahoot mode (`K`, or open `index.html#kahoot`; remembered in localStorage)
@@ -78,6 +78,13 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 ## Design
 - Single dark "dusk" look, projector-friendly. Tokens in `:root`: sky blues, granite stones, amber accent, red/green for outcomes.
 - Two-column layout (arch + team left, feedback panel right), stacks below 820px.
+- Type scales with min(width, height), so 1280×720 projectors and half-screen Kahoot windows fit without scrolling.
+  Extra tightening for short screens in the `max-height:760px` block.
+- Arch has a faint upper tier of small arches (`.tier`), Segovia's two-tier signature.
+- Face moods change real size (font-size), never `transform: scale`, so faces never overlap each other or the caption.
+- Presenter chrome stays quiet: outlined "Next" button; key hints hidden until `?` (or `H`).
+- Checked with an overlap/overflow sweep: every scene, three vote paths, at 1920×1080, 1366×768, 1280×720, 1024×768,
+  and Kahoot mode at 960×950, 960×1000, 640×620. Zero overlaps, zero overflow.
 - Respects `prefers-reduced-motion`.
 
 ## Hard constraints (don't break these)
