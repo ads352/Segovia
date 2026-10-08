@@ -17,7 +17,9 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Presenter A reads the feedback aloud. The room votes with 1–4 fingers.
 - Presenter B drives the laptop:
   - `1`–`4` pick the majority vote (only during a round)
-  - `Space` / `Enter` / `→` advance
+  - `Space` / `Enter` / `→` / `PageDown` advance
+  - `←` / `Backspace` / `PageUp` go back one step, including undoing a vote (snapshot stack `past`; the clock keeps running)
+  - Clickers send PageUp/PageDown, so a presentation remote works for next/back
   - `R` restart, `T` hide/show timer, `F` fullscreen, `?` show/hide key hints
 - Timer starts on the first advance, turns red at 5:30.
 
@@ -100,8 +102,6 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Presenter notes / speaker script per scene (e.g. a hidden notes overlay on `N`).
 - Embed the fonts as base64 so it is fully offline.
 - Optional sound effects on stone drop/fall (needs a click first to unlock audio).
-- Clicker support: map PageDown/PageUp (presentation remotes) to advance/back.
-- A "back" key to undo a mis-pressed vote.
 
 ## Testing
 - Open `index.html`, play all three rounds with different vote combos:
