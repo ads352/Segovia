@@ -355,7 +355,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
       let O = P.querySelector(".opening");
       if(!O){
         P.innerHTML = `<div class="opening fade" style="display:grid;gap:1.1rem">
-          <p class="byline">${GROUP}</p>
+          <p class="byline only-n">${GROUP}</p>
           <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
           ${frame([])}
           <div class="steps">${OPEN_STEPS.map(x=>`<h2 class="ostep">${x.line}</h2>`).join("")}</div>
