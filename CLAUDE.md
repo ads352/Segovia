@@ -33,6 +33,8 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 `open (3 steps) → setup → round 1 → result → round 2 → result → round 3 → result → close`
 - `open`: the framework reveals step by step (`OPEN_STEPS`): Listen → Ask → Act + Tell. Space advances each step.
   Each step shows a supporting line from the week's sessions (`src`, `by`).
+  The opening panel is built once with room for all lines, so the framework boxes never move; each step only
+  toggles classes: the next box lights up (with a short glow), the new line fades in, earlier lines grey out, the quote cross-fades.
 - `setup`: Segovia hook and game rules.
 - `close`: arch result plus framework score (how many of 3 rounds each step was done), and the "this week" ask.
 - Time plan: open ~0:50, rounds ~3:30, close ~0:40.

@@ -134,6 +134,14 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 .fs.part{border-style:solid;border-color:var(--granite);color:var(--ink)}
 .fs.miss{border-color:var(--bad);color:var(--bad)}
 .steps{display:grid;gap:.9rem}
+.ostep{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1),color .7s ease}
+.ostep.shown{opacity:1;transform:none}
+.ostep.past{color:var(--muted)} .ostep em{transition:color .7s ease} .ostep.past em{color:var(--muted)}
+.srcslot{display:grid} .srcslot > .osrc{grid-area:1/1;opacity:0;transition:opacity .6s ease}
+.srcslot > .osrc.shown{opacity:1;transition-delay:.35s}
+.srcslot > .osrc:empty{border:0}
+.fs.just{animation:lit .9s ease}
+@keyframes lit{0%{box-shadow:0 0 0 0 rgba(233,164,64,.7)}100%{box-shadow:0 0 0 14px rgba(233,164,64,0)}}
 .steps em{font-style:normal;color:var(--amber)}
 .dim-h{color:var(--muted)} .dim-h em{color:inherit}
 .ask{color:var(--muted);font-style:italic}
@@ -343,15 +351,28 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     }).join("")}</div>`;
 
     if(st.scene==="open"){
-      const shown = OPEN_STEPS.slice(0, st.step+1);
-      P.innerHTML = `<div style="display:grid;gap:1.1rem">
-        ${st.step===0?`<p class="byline">${GROUP}</p>`:""}
-        <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
-        ${frame(OPEN_STEPS[st.step].lit)}
-        <div class="steps">${shown.map((x,i)=>`<h2 class="${i===st.step?"fade":"dim-h"}">${x.line}</h2>`).join("")}</div>
-        ${OPEN_STEPS[st.step].src?`<p class="src fade">${OPEN_STEPS[st.step].src} <span>· ${OPEN_STEPS[st.step].by}</span></p>`:""}
-        <button class="btn" id="go">Next →</button></div>`;
-      $("go").onclick = next;
+      // Built once with room for every line, so nothing moves; each step only switches classes and transitions.
+      let O = P.querySelector(".opening");
+      if(!O){
+        P.innerHTML = `<div class="opening fade" style="display:grid;gap:1.1rem">
+          <p class="byline">${GROUP}</p>
+          <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
+          ${frame([])}
+          <div class="steps">${OPEN_STEPS.map(x=>`<h2 class="ostep">${x.line}</h2>`).join("")}</div>
+          <div class="srcslot">${OPEN_STEPS.map(x=>`<p class="src osrc">${x.src?`${x.src} <span>· ${x.by}</span>`:""}</p>`).join("")}</div>
+          <button class="btn" id="go">Next →</button></div>`;
+        $("go").onclick = next;
+        O = P.querySelector(".opening");
+        void O.offsetWidth; // start transitions from the hidden state
+      }
+      const lit = OPEN_STEPS[st.step].lit;
+      O.querySelectorAll(".fs").forEach((c,i)=>{
+        const on = lit.includes(i);
+        if(on && !c.classList.contains("on")){ c.classList.add("on","just"); setTimeout(()=>c.classList.remove("just"), 900); }
+        else if(!on) c.classList.remove("on");
+      });
+      O.querySelectorAll(".ostep").forEach((h,i)=>{ h.classList.toggle("shown", i<=st.step); h.classList.toggle("past", i<st.step); });
+      O.querySelectorAll(".osrc").forEach((q,i)=>q.classList.toggle("shown", i===st.step && !!OPEN_STEPS[i].src));
     }
 
     if(st.scene==="setup"){
