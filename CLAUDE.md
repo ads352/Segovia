@@ -31,6 +31,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 ## Scene flow
 `open (3 steps) → setup → round 1 → result → round 2 → result → round 3 → result → close`
 - `open`: the framework reveals step by step (`OPEN_STEPS`): Listen → Ask → Act + Tell. Space advances each step.
+  Each step shows a supporting line from the week's sessions (`src`, `by`).
 - `setup`: Segovia hook and game rules.
 - `close`: arch result plus framework score (how many of 3 rounds each step was done), and the "this week" ask.
 - Time plan: open ~0:50, rounds ~3:30, close ~0:40.
@@ -51,6 +52,19 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - If round 1 is ignored (delta ≤ 0), Marta goes silent and grey.
 - If round 1 closed the loop, Marta disagrees openly in the meeting.
 - Before round 3: Priya joins; if any loop was closed, Jonas and Lea also join. If round 2 was ignored, Rui goes silent.
+
+## Links to the Segovia week (Self-Leadership Week, Oct 2026)
+- Assignment brief: Appreciative Inquiry in a company, 6 minutes, free format (told it is guidance).
+  Upload to Blackboard before 9:30 Fri Oct 9. Final presentations Fri 12:10, chaired by Juan Luis Ramón.
+- Opening step 1: gorilla / inattentional blindness, 83% of radiologists (Attention Management, Juan Luis Ramón).
+- Opening step 2: "The questions we ask influence what people notice, discuss, and believe is possible" (Appreciative Inquiry, Tania Romero).
+- Opening step 3: "Asking without acting erodes trust faster than not asking at all" (Workplace Wellbeing Practices, Juan Luis Ramón).
+- Rounds are Clarke's "sliding door moments" from Psychological Safety (Eva Herber): challenging the status quo (Marta),
+  sharing an idea (Rui), admitting a mistake (Priya); joining a team appears when Jonas and Lea join.
+- Psychological safety is team-level, trust is between people (Eva Herber), hence "Trust builds psychological safety".
+- Closing: "Trust is built in very small moments" (Brené Brown, quoted in Psychological Safety);
+  arch label "Growth is individual. Success is collective." (Burn On Awareness, Marcos Cajina).
+- `Build-the-Aqueduct.pdf`: backup of every scene (all 4s path, plus the all 3s ending). Regenerate after copy changes.
 
 ## Content
 - Characters: Marta (senior engineer), Rui (design engineer), Priya (graduate engineer). Generic engineering-team names.
