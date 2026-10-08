@@ -99,6 +99,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Presenter chrome stays quiet: outlined "Next" button; key hints hidden until `?` (or `H`).
 - Checked with an overlap/overflow sweep: every scene, three vote paths, at 1920×1080, 1366×768, 1280×720, 1024×768,
   and Kahoot mode at 960×950, 960×1000, 640×620. Zero overlaps, zero overflow.
+- Favicon: inline base64 SVG (stone arch with amber keystone on the dusk background), so it works offline.
 - Respects `prefers-reduced-motion`.
 
 ## Hard constraints (don't break these)
