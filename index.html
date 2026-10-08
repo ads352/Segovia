@@ -42,7 +42,7 @@ svg.arch{width:100%;height:auto;display:block;max-height:58vh}
 .pillar{fill:var(--granite)} .pillar-dk{fill:var(--granite-dk)}
 .ground{stroke:var(--line);stroke-width:2}
 .slot-label{fill:var(--muted);font:600 13px var(--f-body)}
-.team{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem;margin-top:1.1rem;min-height:6.5em}
+.team{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4rem;margin-top:1.6rem;min-height:6.5em}
 .mate{display:flex;flex-direction:column;align-items:center;gap:.3rem;transition:transform .6s,opacity .6s,filter .6s}
 .mate .face{width:3.4em;height:3em;border-radius:46% 54% 42% 58%/55% 50% 50% 45%;background:var(--granite);position:relative;box-shadow:inset -6px -6px 0 rgba(0,0,0,.12)}
 .mate .face::before,.mate .face::after{content:"";position:absolute;top:38%;width:.42em;height:.42em;border-radius:50%;background:#2a2a2a}
@@ -124,6 +124,8 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 .steps em{font-style:normal;color:var(--amber)}
 .dim-h{color:var(--muted)} .dim-h em{color:inherit}
 .ask{color:var(--muted);font-style:italic}
+.grp{font-family:var(--f-body);font-weight:700;font-size:.62em;letter-spacing:.08em;text-transform:uppercase;color:var(--sky);background:var(--amber);border-radius:.4em;padding:.2em .55em;margin-left:.5em;vertical-align:middle}
+.byline{color:var(--muted);font-weight:700;letter-spacing:.02em}
 .src{color:var(--ink);border-left:3px solid var(--granite-dk);padding-left:.8em;font-size:.95em}
 .src span{color:var(--muted);white-space:nowrap}
 .later{border-left:3px solid var(--amber);padding-left:.8em}
@@ -134,7 +136,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
 <div class="app">
   <header>
-    <div class="brand">Build the <span>Aqueduct</span></div>
+    <div class="brand">Build the <span>Aqueduct</span> <small class="grp">Group E</small></div>
     <div class="meta">
       <div class="pips" id="pips" aria-label="Round progress"></div>
       <div>Stones <b id="stoneCount">3</b> / 9</div>
@@ -160,7 +162,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   </main>
   <footer>
     <div><span class="only-k">Click the Kahoot winner, or click here first and press </span><kbd>1</kbd>–<kbd>4</kbd><span class="only-n"> pick the room's vote</span> · <kbd>Space</kbd> next · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen · <kbd>K</kbd> Kahoot mode</div>
-    <div>EMBA F2F · Segovia</div>
+    <div>Group E · Lina, Omar, Paul, Ariel, Rodrigo, Sultan · Self-Leadership Week, Segovia</div>
   </footer>
 </div>
 
@@ -226,6 +228,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   // The framework. Opening reveals it one step at a time; closing scores it.
   const FRAME = ["Ask","Listen","Act","Tell"];
+  const GROUP = "Group E · Lina, Omar, Paul, Ariel, Rodrigo, Sultan";
   // Each step pairs our line with something from the week in Segovia
   const OPEN_STEPS = [
     {lit:[1], line:"Every leader is told: <em>listen</em>."},
@@ -326,6 +329,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     if(st.scene==="open"){
       const shown = OPEN_STEPS.slice(0, st.step+1);
       P.innerHTML = `<div style="display:grid;gap:1.1rem">
+        ${st.step===0?`<p class="byline">${GROUP}</p>`:""}
         <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
         ${frame(OPEN_STEPS[st.step].lit)}
         <div class="steps">${shown.map((x,i)=>`<h2 class="${i===st.step?"fade":"dim-h"}">${x.line}</h2>`).join("")}</div>
@@ -394,6 +398,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
         <ul class="rules">
           <li><b>This week</b><span>Name one person. Ask what you should change. Act on one thing. Then tell them what changed.</span></li>
         </ul>
+        <p class="byline only-n">Thank you. ${GROUP}</p>
         <button class="btn" id="go">Play again</button></div>`;
       $("go").onclick = reset;
     }

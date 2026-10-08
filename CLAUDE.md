@@ -4,6 +4,7 @@ Live presentation game for a 6-minute group talk at the IE EMBA face-to-face ses
 Topic: acting on team feedback, and closing the loop, builds trust and psychological safety.
 Framework: **Ask · Listen · Act · Tell**. Story: everyone says listen; but people don't speak unless you ask;
 and they never speak again if you don't act and tell. "Tell" is the keystone.
+Presented by Group E: Lina, Omar, Paul, Ariel, Rodrigo, Sultan (first names only on screen; the site is public, so no photos or full names).
 Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a room, one projector.
 
 ## What exists
