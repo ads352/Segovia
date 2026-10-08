@@ -96,7 +96,7 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
 /* Kahoot mode (K): game sits in half the screen next to Kahoot. Arch on top, short panel below, Kahoot-coloured answer buttons. */
 body.kahoot{font-size:clamp(16px,2.1vw,24px)}
 body.kahoot main{grid-template-columns:1fr;gap:.8rem;align-items:start}
-body.kahoot svg.arch{max-height:38vh;margin-inline:auto}
+body.kahoot svg.arch{max-height:35vh;margin-inline:auto}
 body.kahoot .team{min-height:4.5em;margin-top:0;gap:1rem}
 body.kahoot .bubble{font-size:1em}
 body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
@@ -108,6 +108,18 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 .kc:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .kc.solo{cursor:default;justify-self:start}
 .k0{background:#e21b3c}.k1{background:#1368ce}.k2{background:#d89e00}.k3{background:#26890c}
+.frame{display:flex;flex-wrap:wrap;gap:.5rem}
+.fs{font-family:var(--f-display);font-weight:800;font-size:1.15em;padding:.4em .9em;border-radius:.5em .5em .2em .2em;border:2px dashed var(--granite-dk);color:var(--muted);display:inline-flex;gap:.45em;align-items:baseline;transition:background .4s,color .4s,border-color .4s}
+.fs small{font-size:.7em;font-weight:700;opacity:.8}
+.fs.on{background:var(--granite);border:2px solid #6c6253;color:#1d1d1d}
+.fs.key.on{background:var(--amber);border-color:#a8742a}
+.fs.part{border-style:solid;border-color:var(--granite);color:var(--ink)}
+.fs.miss{border-color:var(--bad);color:var(--bad)}
+.steps{display:grid;gap:.9rem}
+.steps em{font-style:normal;color:var(--amber)}
+.dim-h{color:var(--muted)} .dim-h em{color:inherit}
+.ask{color:var(--muted);font-style:italic}
+.later{border-left:3px solid var(--amber);padding-left:.8em}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -150,49 +162,58 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   const START = 3, TARGET = 9;
   const FILL_ORDER = [0,8,1,7,2,6,3,5,4]; // keystone last
 
+  // Each round: you ask (Ask), they answer (Listen), the room picks what you do next (Act, Tell).
   const ROUNDS = [
     {
-      who:"Marta", role:"Senior engineer",
+      who:"Marta", role:"Senior engineer", ask:"In your 1:1 you ask Marta: “What should I do differently?”",
       says:"I don't feel I can disagree with you in meetings. You've decided before we talk.",
       options:[
         {t:"Defend", d:"“I always ask for input. People should speak up more.”", delta:-1, mood:"small",
           out:"Marta hears: the problem is you. A stone falls."},
-        {t:"Thank, do nothing", d:"“Thanks, really good point.” Nothing changes.", delta:0, mood:"dim",
+        {t:"Listen only", d:"“Thanks, really good point.” Nothing changes.", delta:0, mood:"dim",
           out:"It felt polite. Nothing moved. Marta notices."},
-        {t:"Act quietly", d:"Ask for views before giving yours. Don't mention it.", delta:1, mood:"normal",
+        {t:"Act, don't tell", d:"Ask for views before giving yours. Don't mention it.", delta:1, mood:"normal",
           out:"Meetings improve. Marta isn't sure it was because of her."},
-        {t:"Act and close the loop", d:"Change how you run meetings, then tell the team: “Marta raised this. Here's what I changed.”", delta:2, mood:"bright", loop:true,
+        {t:"Act and tell", d:"Change how you run meetings. Tell the team Marta raised it.", delta:2, mood:"bright", loop:true,
           out:"Marta sees her voice changed something. Two stones."}
       ]
     },
     {
-      who:"Rui", role:"Design engineer",
+      who:"Rui", role:"Design engineer", ask:"In the retro you ask the team: “What slows us down?”",
       says:"Our daily stand-up runs 40 minutes. It eats my best focus time.",
       options:[
-        {t:"Defend with data", d:"“Alignment prevents rework. The numbers say we need it.”", delta:-1, mood:"small",
+        {t:"Defend", d:"“Alignment prevents rework. The numbers say we need it.”", delta:-1, mood:"small",
           out:"Rui stops bringing problems. You won the argument and lost the signal."},
-        {t:"Thank, do nothing", d:"“Fair. Let's look at it at some point.”", delta:0, mood:"dim",
+        {t:"Listen only", d:"“Fair. Let's look at it at some point.”", delta:0, mood:"dim",
           out:"“At some point” never comes. Rui stops asking."},
-        {t:"Act quietly", d:"Cut it to 15 minutes. No explanation.", delta:1, mood:"normal",
+        {t:"Act, don't tell", d:"Cut it to 15 minutes. No explanation.", delta:1, mood:"normal",
           out:"Better meetings. The team guesses why."},
-        {t:"Act and close the loop", d:"Cut to 15 minutes. “Rui flagged this. Tell me in two weeks if it works.”", delta:2, mood:"bright", loop:true,
+        {t:"Act and tell", d:"Cut to 15 minutes. “Rui flagged this. Tell me in two weeks if it works.”", delta:2, mood:"bright", loop:true,
           out:"Rui learns feedback is safe and useful. So does everyone watching."}
       ]
     },
     {
-      who:"Priya", role:"Graduate engineer",
+      who:"Priya", role:"Graduate engineer", ask:"You ask Priya: “Is there anything you've been holding back?”",
       says:"I made a mistake on the drawings last week. I was afraid to tell you.",
       options:[
-        {t:"Find who's to blame", d:"“That should have been caught. Who checked it?”", delta:-1, mood:"small",
+        {t:"Defend", d:"“That should have been caught. Who checked it?”", delta:-1, mood:"small",
           out:"Next mistake, nobody tells you. You will find out from the customer."},
-        {t:"Thank, do nothing", d:"“OK, thanks for telling me.”", delta:0, mood:"dim",
+        {t:"Listen only", d:"“OK, thanks for telling me.”", delta:0, mood:"dim",
           out:"Priya is relieved. The process that let it slip stays the same."},
-        {t:"Act quietly", d:"Fix the review step. Keep it between you.", delta:1, mood:"normal",
+        {t:"Act, don't tell", d:"Fix the review step. Keep it between you.", delta:1, mood:"normal",
           out:"The gap closes. The fear stays."},
-        {t:"Act and close the loop", d:"Thank her in front of the team for raising it early, fix the review step, report back.", delta:2, mood:"bright", loop:true,
+        {t:"Act and tell", d:"Thank her in front of the team, fix the review step, report back.", delta:2, mood:"bright", loop:true,
           out:"Admitting a mistake just became the normal thing to do here."}
       ]
     }
+  ];
+
+  // The framework. Opening reveals it one step at a time; closing scores it.
+  const FRAME = ["Ask","Listen","Act","Tell"];
+  const OPEN_STEPS = [
+    {lit:[1], line:"Every leadership book says: <em>listen</em> to your team."},
+    {lit:[0,1], line:"But some people don't speak unless you <em>ask</em>."},
+    {lit:[0,1,2,3], line:"And if you don't <em>act</em>, and <em>tell</em> them what changed, they never speak again."}
   ];
 
   // Kahoot answer order: 1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square
@@ -213,7 +234,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   let st;
 
   function reset(){
-    st = {scene:"intro", round:0, stones:START, history:[], loops:0, team:[], picked:null, t0:null};
+    st = {scene:"open", step:0, round:0, stones:START, history:[], loops:0, team:[], picked:null, t0:null};
     st.team = [{name:"Marta",mood:"normal"}];
     buildArch();
     render();
@@ -273,18 +294,33 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
     const P = $("panel");
     $("pips").innerHTML = ROUNDS.map((_,i)=>`<span class="pip ${i<st.history.length?'on':''}"></span>`).join("");
     renderTeam();
-    $("archLabel").textContent = st.scene==="final"
+    $("archLabel").textContent = st.scene==="close"
       ? (st.stones>=TARGET?"The keystone holds. The arch stands.":"Gaps where voices used to be.")
       : "No mortar. Only stones holding each other.";
 
-    if(st.scene==="intro"){
+    const frame = (lit, score) => `<div class="frame">${FRAME.map((f,i)=>{
+      const n = score ? score[i] : null;
+      const cls = score ? (n===3?"on":n>0?"part":"miss") : (lit.includes(i)?"on":"");
+      return `<span class="fs ${cls} ${i===3?"key":""}">${f}${score?`<small>${n}/3</small>`:""}</span>`;
+    }).join("")}</div>`;
+
+    if(st.scene==="open"){
+      const shown = OPEN_STEPS.slice(0, st.step+1);
+      P.innerHTML = `<div style="display:grid;gap:1.1rem">
+        <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
+        ${frame(OPEN_STEPS[st.step].lit)}
+        <div class="steps">${shown.map((x,i)=>`<h2 class="${i===st.step?"fade":"dim-h"}">${x.line}</h2>`).join("")}</div>
+        <button class="btn" id="go">Next →</button></div>`;
+      $("go").onclick = next;
+    }
+
+    if(st.scene==="setup"){
       P.innerHTML = `<div class="fade" style="display:grid;gap:1.1rem">
         <div class="eyebrow">A game about acting on feedback</div>
         <h1>Build the Aqueduct</h1>
         <p class="lead">Segovia's aqueduct has stood for almost 2,000 years without mortar. Every stone carries the next one.</p>
-        <p class="dim-t only-n">A team works the same way. Each piece of feedback you act on is a stone. Ignore it, and the arch weakens.</p>
         <ul class="rules">
-          <li><b>3</b><span>rounds. Your team gives you feedback.</span></li>
+          <li><b>3</b><span>times, you ask your team for feedback.</span></li>
           <li><b>4</b><span>ways to react. ${kahoot()?"The room votes in Kahoot.":"The room votes with 1–4 fingers."}</span></li>
           <li><b>9</b><span>stones complete the arch.</span></li>
         </ul>
@@ -294,8 +330,10 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
     if(st.scene==="round"){
       const R = ROUNDS[st.round];
-      P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
+      P.innerHTML = `<div class="fade" style="display:grid;gap:.9rem">
+        ${st.later?`<p class="later">${st.later}</p>`:""}
         <div class="eyebrow">Round ${st.round+1} of 3 · ${kahoot()?"Vote in Kahoot now":"Room, vote now"}</div>
+        <p class="ask">${R.ask}</p>
         <div class="bubble"><span class="who">${R.who} · ${R.role}</span>${R.says}</div>
         ${kahoot()
           ? `<div class="kchoices">${R.options.map((o,i)=>`
@@ -322,57 +360,18 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
       $("go").onclick = next;
     }
 
-    if(st.scene==="later"){
-      // delayed consequence before the next round
-      let html="";
-      if(st.round===1){
-        const first = st.history[0];
-        const ignored = ROUNDS[0].options[first].delta<=0;
-        html = ignored
-          ? `<div class="eyebrow">Two weeks later · Team meeting</div>
-             <div class="bubble empty"><span class="who" style="color:inherit">Marta</span>…</div>
-             <h2>Marta used to speak up. Today she says nothing.</h2>
-             <p class="dim-t">Silence is the real cost of not acting. It doesn't show up as a complaint. It shows up as nothing.</p>`
-          : `<div class="eyebrow">Two weeks later · Team meeting</div>
-             <div class="bubble"><span class="who">Marta</span>I'm not sure this plan works. Can I show you why?</div>
-             <h2>Marta disagrees with you, in the meeting. That's the point.</h2>
-             <p class="dim-t">Rui was watching. He has something to say too.</p>`;
-      } else {
-        html = st.loops>0
-          ? `<div class="eyebrow">Two weeks later · Something changed</div>
-             <h2>People saw feedback lead somewhere. More of them step forward.</h2>
-             <p class="dim-t">Closing the loop doesn't just fix one thing. It tells everyone watching that speaking up is safe.</p>`
-          : `<div class="eyebrow">Two weeks later · A quiet room</div>
-             <h2>Fewer people bring you problems now.</h2>
-             <p class="dim-t">That can look like a calm team. It is often a team that stopped telling you things.</p>`;
-      }
-      P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">${html}<button class="btn" id="go">Next feedback →</button></div>`;
-      $("go").onclick = next;
-    }
-
-    if(st.scene==="final"){
+    if(st.scene==="close"){
       const done = st.stones>=TARGET;
+      // Ask happened every round; Listen = didn't defend; Act = changed something; Tell = closed the loop
+      const score = [3, st.history.filter(i=>i>=1).length, st.history.filter(i=>i>=2).length, st.history.filter(i=>i===3).length];
       P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
         <div class="eyebrow">${st.stones} of 9 stones</div>
         <h1>${done?"The arch stands.":"The arch can't close."}</h1>
-        <p class="lead">${done
-          ? "Every stone is a voice that was heard and saw something change. That is trust, built one stone at a time."
-          : "The missing stones are not missing complaints. They are people who stopped speaking up."}</p>
-        <p class="dim-t">Thanking someone is not acting. Acting quietly is not enough. Trust comes from acting and telling people what changed.</p>
-        <button class="btn" id="go">One thing for Monday →</button></div>`;
-      $("go").onclick = next;
-    }
-
-    if(st.scene==="cta"){
-      P.innerHTML = `<div class="fade" style="display:grid;gap:1.1rem">
-        <div class="eyebrow">Your turn</div>
-        <h1>Place one stone this week.</h1>
+        ${frame([], score)}
+        <p class="lead">People don't speak if you don't ask. They stop speaking if you don't act and tell.</p>
         <ul class="rules">
-          <li><b>1</b><span>Pick one piece of feedback your team gave you.</span></li>
-          <li><b>2</b><span>Act on it. Even a small change counts.</span></li>
-          <li><b>3</b><span>Go back to the person and tell them what you changed.</span></li>
+          <li><b>This week</b><span>Ask one person what you should change. Listen. Act on one thing. Then tell them what changed.</span></li>
         </ul>
-        <p class="dim-t">Step 3 is the one we skip. It is the one that builds the arch.</p>
         <button class="btn" id="go">Play again</button></div>`;
       $("go").onclick = reset;
     }
@@ -401,27 +400,35 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
 
   function next(){
     if(st.t0===null) st.t0 = Date.now();
-    if(st.scene==="intro"){ st.scene="round"; st.round=0; }
+    if(st.scene==="open"){
+      if(st.step < OPEN_STEPS.length-1) st.step++;
+      else st.scene="setup";
+    }
+    else if(st.scene==="setup"){ st.scene="round"; st.round=0; st.later=null; }
     else if(st.scene==="result"){
       if(st.round<2){
         st.round++;
-        // delayed consequences on the team
+        // delayed consequences: the team changes and one line opens the next round
         if(st.round===1){
           const ignored = ROUNDS[0].options[st.history[0]].delta<=0;
           setMood("Marta", ignored ? "silent" : "bright");
           addMate("Rui");
+          st.later = ignored
+            ? "<b>Two weeks later.</b> Marta used to speak up in meetings. Now she says nothing."
+            : "<b>Two weeks later.</b> Marta disagrees with you in a meeting. That's the point.";
         } else {
           addMate("Priya");
           if(st.loops>0){ addMate("Jonas"); addMate("Lea"); }
           const r2 = ROUNDS[1].options[st.history[1]].delta<=0;
           if(r2) setMood("Rui","silent");
+          st.later = st.loops>0
+            ? "<b>Two weeks later.</b> People saw feedback lead somewhere. More of them speak up."
+            : "<b>Two weeks later.</b> Fewer people bring you problems. It looks calm. It isn't.";
         }
-        st.scene="later";
-      } else st.scene="final";
+        st.scene="round";
+      } else st.scene="close";
     }
-    else if(st.scene==="later"){ st.scene="round"; }
-    else if(st.scene==="final"){ st.scene="cta"; }
-    else if(st.scene==="cta"){ reset(); return; }
+    else if(st.scene==="close"){ reset(); return; }
     render();
   }
 

@@ -2,6 +2,8 @@
 
 Live presentation game for a 6-minute group talk at the IE EMBA face-to-face session in Segovia.
 Topic: acting on team feedback, and closing the loop, builds trust and psychological safety.
+Framework: **Ask · Listen · Act · Tell**. Story: everyone says listen; but people don't speak unless you ask;
+and they never speak again if you don't act and tell. "Tell" is the keystone.
 Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a room, one projector.
 
 ## What exists
@@ -27,20 +29,26 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 - Kahoot questions and set-up: `KAHOOT.md`.
 
 ## Scene flow
-`intro → round 1 → result → later → round 2 → result → later → round 3 → result → final → cta`
+`open (3 steps) → setup → round 1 → result → round 2 → result → round 3 → result → close`
+- `open`: the framework reveals step by step (`OPEN_STEPS`): Listen → Ask → Act + Tell. Space advances each step.
+- `setup`: Segovia hook and game rules.
+- `close`: arch result plus framework score (how many of 3 rounds each step was done), and the "this week" ask.
+- Time plan: open ~0:50, rounds ~3:30, close ~0:40.
 
 ## Game rules (in `ROUNDS` and `choose()`)
 - Arch has 9 voussoirs. Start at 3 stones (`START`), goal 9 (`TARGET`). Keystone fills last (`FILL_ORDER`).
 - Each round: one team member's feedback, four leader reactions:
-  1. Defend → −1 stone, character shrinks
-  2. Thank, do nothing → 0, character dims
-  3. Act quietly → +1
-  4. Act and close the loop → +2, character brightens
+  1. Defend → −1 stone, character shrinks (failed to listen)
+  2. Listen only → 0, character dims
+  3. Act, don't tell → +1
+  4. Act and tell → +2, character brightens
+- Each round starts with what the leader asked (`ask` in `ROUNDS`), so Ask and Listen are shown, and the vote is about Act and Tell.
 - Round 3 bonus: closing the loop in round 3 after closing it earlier gives +1 extra and lights up the whole team.
-- Arch only completes if the room closes the loop at least twice. This is intentional: "act quietly" every round must fail.
+- Arch only completes if the room closes the loop at least twice. This is intentional: "act, don't tell" every round must fail.
 
 ## Delayed consequences (the core teaching mechanic, in `next()` and the `later` scene)
-- If round 1 is ignored (delta ≤ 0), Marta goes silent and grey, and the "later" scene shows her empty speech bubble.
+- No separate scene: the consequence is one "Two weeks later" line (`st.later`) at the top of the next round, plus the team animation.
+- If round 1 is ignored (delta ≤ 0), Marta goes silent and grey.
 - If round 1 closed the loop, Marta disagrees openly in the meeting.
 - Before round 3: Priya joins; if any loop was closed, Jonas and Lea also join. If round 2 was ignored, Rui goes silent.
 
