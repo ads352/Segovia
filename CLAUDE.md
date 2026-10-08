@@ -18,6 +18,14 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
   - `R` restart, `T` hide/show timer, `F` fullscreen
 - Timer starts on the first advance, turns red at 5:30.
 
+## Kahoot mode (`K`, or open `index.html#kahoot`; remembered in localStorage)
+- For running a Kahoot poll alongside: Kahoot in one half of the screen, the game in the other.
+- Kahoot cannot be embedded or read automatically. Presenter B clicks the Kahoot winner in the game.
+- Layout stacks: arch on top, short panel below. Round choices become Kahoot-coloured buttons
+  (1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square). Answer order in Kahoot must match.
+- Normal mode is unchanged, so Kahoot can be dropped on the day if Wi-Fi fails.
+- Kahoot questions and set-up: `KAHOOT.md`.
+
 ## Scene flow
 `intro → round 1 → result → later → round 2 → result → later → round 3 → result → final → cta`
 

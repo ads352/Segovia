@@ -93,6 +93,21 @@ footer{display:flex;flex-wrap:wrap;gap:1.2rem;justify-content:space-between;colo
 kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;color:var(--ink)}
 .fade{animation:fadein .5s both}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}}
+/* Kahoot mode (K): game sits in half the screen next to Kahoot. Arch on top, short panel below, Kahoot-coloured answer buttons. */
+body.kahoot{font-size:clamp(16px,2.1vw,24px)}
+body.kahoot main{grid-template-columns:1fr;gap:.8rem;align-items:start}
+body.kahoot svg.arch{max-height:38vh;margin-inline:auto}
+body.kahoot .team{min-height:4.5em;margin-top:0;gap:1rem}
+body.kahoot .bubble{font-size:1em}
+body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
+.kchoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+.kc{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:.7em;padding:.75em .9em;border-radius:.5em;color:#fff;font-weight:700;line-height:1.2;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
+.kc svg{width:1.3em;height:1.3em;flex:none;fill:#fff}
+.kc .n{margin-left:auto;opacity:.8;font-family:var(--f-display)}
+.kc:hover{filter:brightness(1.1)}
+.kc:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.kc.solo{cursor:default;justify-self:start}
+.k0{background:#e21b3c}.k1{background:#1368ce}.k2{background:#d89e00}.k3{background:#26890c}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -125,7 +140,7 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
     <section class="panel" id="panel" aria-live="polite"></section>
   </main>
   <footer>
-    <div><kbd>1</kbd>–<kbd>4</kbd> pick the room's vote · <kbd>Space</kbd> next · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen</div>
+    <div><span class="only-k">Click the Kahoot winner, or click here first and press </span><kbd>1</kbd>–<kbd>4</kbd><span class="only-n"> pick the room's vote</span> · <kbd>Space</kbd> next · <kbd>R</kbd> restart · <kbd>T</kbd> timer · <kbd>F</kbd> fullscreen · <kbd>K</kbd> Kahoot mode</div>
     <div>EMBA F2F · Segovia</div>
   </footer>
 </div>
@@ -180,7 +195,21 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
     }
   ];
 
+  // Kahoot answer order: 1 red triangle, 2 blue diamond, 3 yellow circle, 4 green square
+  const SHAPES = [
+    '<path d="M12 3 22 21H2Z"/>',
+    '<path d="M12 2 22 12 12 22 2 12Z"/>',
+    '<circle cx="12" cy="12" r="10"/>',
+    '<rect x="3" y="3" width="18" height="18"/>'
+  ];
+  const kshape = i => `<svg viewBox="0 0 24 24" aria-hidden="true">${SHAPES[i]}</svg>`;
+
   const $ = id => document.getElementById(id);
+  const kahoot = () => document.body.classList.contains("kahoot");
+  function setKahoot(on){
+    document.body.classList.toggle("kahoot", on);
+    try{ localStorage.setItem("aqueduct-kahoot", on?"1":"0"); }catch(_){}
+  }
   let st;
 
   function reset(){
@@ -253,10 +282,10 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
         <div class="eyebrow">A game about acting on feedback</div>
         <h1>Build the Aqueduct</h1>
         <p class="lead">Segovia's aqueduct has stood for almost 2,000 years without mortar. Every stone carries the next one.</p>
-        <p class="dim-t">A team works the same way. Each piece of feedback you act on is a stone. Ignore it, and the arch weakens.</p>
+        <p class="dim-t only-n">A team works the same way. Each piece of feedback you act on is a stone. Ignore it, and the arch weakens.</p>
         <ul class="rules">
           <li><b>3</b><span>rounds. Your team gives you feedback.</span></li>
-          <li><b>4</b><span>ways to react. The room votes with 1–4 fingers.</span></li>
+          <li><b>4</b><span>ways to react. ${kahoot()?"The room votes in Kahoot.":"The room votes with 1–4 fingers."}</span></li>
           <li><b>9</b><span>stones complete the arch.</span></li>
         </ul>
         <button class="btn" id="go">Start</button></div>`;
@@ -266,12 +295,15 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
     if(st.scene==="round"){
       const R = ROUNDS[st.round];
       P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
-        <div class="eyebrow">Round ${st.round+1} of 3 · Room, vote now</div>
+        <div class="eyebrow">Round ${st.round+1} of 3 · ${kahoot()?"Vote in Kahoot now":"Room, vote now"}</div>
         <div class="bubble"><span class="who">${R.who} · ${R.role}</span>${R.says}</div>
-        <div class="choices">${R.options.map((o,i)=>`
-          <button class="choice" data-i="${i}"><span class="k">${i+1}</span><span class="t">${o.t}</span><span class="d">${o.d}</span></button>`).join("")}
-        </div></div>`;
-      P.querySelectorAll(".choice").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+        ${kahoot()
+          ? `<div class="kchoices">${R.options.map((o,i)=>`
+              <button class="kc k${i}" data-i="${i}">${kshape(i)}<span>${o.t}</span><span class="n">${i+1}</span></button>`).join("")}</div>`
+          : `<div class="choices">${R.options.map((o,i)=>`
+              <button class="choice" data-i="${i}"><span class="k">${i+1}</span><span class="t">${o.t}</span><span class="d">${o.d}</span></button>`).join("")}</div>`}
+        </div>`;
+      P.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
     }
 
     if(st.scene==="result"){
@@ -280,9 +312,10 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
       const lbl = o.delta>0?`+${o.delta} stone${o.delta>1?"s":""}`:o.delta<0?"−1 stone":"No stone";
       P.innerHTML = `<div class="fade" style="display:grid;gap:1rem">
         <div class="eyebrow">Round ${st.round+1} · The room chose ${st.picked+1}</div>
-        <div class="choices">${R.options.map((x,i)=>`
-          <div class="choice ${i===st.picked?'picked':'faded'}"><span class="k">${i+1}</span><span class="t">${x.t}</span><span class="d">${x.d}</span></div>`).join("")}
-        </div>
+        ${kahoot()
+          ? `<div class="kc solo k${st.picked}">${kshape(st.picked)}<span>${o.t}</span></div>`
+          : `<div class="choices">${R.options.map((x,i)=>`
+              <div class="choice ${i===st.picked?'picked':'faded'}"><span class="k">${i+1}</span><span class="t">${x.t}</span><span class="d">${x.d}</span></div>`).join("")}</div>`}
         <div class="verdict"><span class="chip ${cls}">${lbl}</span></div>
         <h2>${o.out}</h2>
         <button class="btn" id="go">${st.round<2?"Two weeks later →":"See the arch →"}</button></div>`;
@@ -407,12 +440,15 @@ kbd{font:inherit;border:1px solid var(--line);border-radius:.3em;padding:0 .4em;
       if(st.scene!=="round"){ e.preventDefault(); next(); }
     }
     else if(e.key==="r"||e.key==="R"){ reset(); }
+    else if(e.key==="k"||e.key==="K"){ setKahoot(!kahoot()); render(); }
     else if(e.key==="t"||e.key==="T"){ const w=$("clockWrap"); w.hidden=!w.hidden; }
     else if(e.key==="f"||e.key==="F"){
       try{ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }catch(_){}
     }
   });
 
+  let saved=null; try{ saved=localStorage.getItem("aqueduct-kahoot"); }catch(_){}
+  setKahoot(location.hash==="#kahoot" || saved==="1");
   reset();
 })();
 </script>
