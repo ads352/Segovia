@@ -215,8 +215,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
   const FRAME = ["Ask","Listen","Act","Tell"];
   // Each step pairs our line with something from the week in Segovia
   const OPEN_STEPS = [
-    {lit:[1], line:"Every leader is told: <em>listen</em>.",
-      src:"But we only notice what we look for. 83% of radiologists missed a gorilla in the scan in front of them.", by:"Attention Management"},
+    {lit:[1], line:"Every leader is told: <em>listen</em>."},
     {lit:[0,1], line:"But some people don't speak unless you <em>ask</em>.",
       src:"“The questions we ask influence what people notice, discuss, and believe is possible.”", by:"Appreciative Inquiry"},
     {lit:[0,1,2,3], line:"And if you don't <em>act</em> and <em>tell</em>, they never speak again.",
@@ -317,7 +316,7 @@ body.kahoot .only-n,body:not(.kahoot) .only-k{display:none}
         <div class="eyebrow">Trust builds psychological safety. How do leaders build trust?</div>
         ${frame(OPEN_STEPS[st.step].lit)}
         <div class="steps">${shown.map((x,i)=>`<h2 class="${i===st.step?"fade":"dim-h"}">${x.line}</h2>`).join("")}</div>
-        <p class="src fade">${OPEN_STEPS[st.step].src} <span>· ${OPEN_STEPS[st.step].by}</span></p>
+        ${OPEN_STEPS[st.step].src?`<p class="src fade">${OPEN_STEPS[st.step].src} <span>· ${OPEN_STEPS[st.step].by}</span></p>`:""}
         <button class="btn" id="go">Next →</button></div>`;
       $("go").onclick = next;
     }

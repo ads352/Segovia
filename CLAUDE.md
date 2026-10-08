@@ -56,7 +56,7 @@ Owner: Ariel (engineering director, EMBA student). Audience: EMBA cohort in a ro
 ## Links to the Segovia week (Self-Leadership Week, Oct 2026)
 - Assignment brief: Appreciative Inquiry in a company, 6 minutes, free format (told it is guidance).
   Upload to Blackboard before 9:30 Fri Oct 9. Final presentations Fri 12:10, chaired by Juan Luis Ramón.
-- Opening step 1: gorilla / inattentional blindness, 83% of radiologists (Attention Management, Juan Luis Ramón).
+- Opening step 1 has no quote on purpose: "listen" is the familiar claim the next two steps complicate.
 - Opening step 2: "The questions we ask influence what people notice, discuss, and believe is possible" (Appreciative Inquiry, Tania Romero).
 - Opening step 3: "Asking without acting erodes trust faster than not asking at all" (Workplace Wellbeing Practices, Juan Luis Ramón).
 - Rounds are Clarke's "sliding door moments" from Psychological Safety (Eva Herber): challenging the status quo (Marta),
