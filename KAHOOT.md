@@ -1,6 +1,6 @@
 # Kahoot set-up for Build the Aqueduct
 
-The Kahoot: https://create.kahoot.it/share/leading-psychological-safety-conversations/559ec351-468b-4b7e-80ba-a2afcdedf796
+The Kahoot: https://play.kahoot.it/v2/?quizId=559ec351-468b-4b7e-80ba-a2afcdedf796&hostId=05a4624c-039a-4e02-bc5d-113feb2c48bb
 (The game's opening screen has a small "Open Kahoot" link, bottom left, that opens it in its own window.)
 
 Run Kahoot and the game side by side on the laptop driving the projector.
